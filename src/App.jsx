@@ -1,7 +1,16 @@
 import "./App.css";
 import ProductCard from "./ProductCard";
+import { useState } from 'react';
 
 export default function App() {
+
+  // create a state using useState
+  // the useState function returns an array
+  // the first element in the array is the value of the state
+  // the second element in the array is a function that let us change the state
+  // the parameter to the function is the default value of the state
+  const [isNavbarShowing, setIsNavbarShowing] = useState(false);
+
   return (
     <>
       <nav className="navbar navbar-expand-lg navbar-dark bg-dark">
@@ -13,10 +22,17 @@ export default function App() {
             aria-controls="navbarNav"
             aria-expanded="false"
             aria-label="Toggle navigation"
+            onClick={() => {
+              if (isNavbarShowing) {
+                setIsNavbarShowing(false);
+              } else {
+                setIsNavbarShowing(true);
+              }
+            }}
           >
             <span className="navbar-toggler-icon"></span>
           </button>
-          <div className="collapse navbar-collapse" id="navbarNav">
+          <div className={`collapse navbar-collapse ${isNavbarShowing ? "show" : ""}`} id="navbarNav">
             <ul className="navbar-nav ms-auto">
               <li className="nav-item">
                 <a className="nav-link active" aria-current="page" href="#">Home</a>
