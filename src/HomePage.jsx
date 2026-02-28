@@ -1,6 +1,26 @@
+import axios from "axios";
+import { useEffect, useState } from "react";
+
 import ProductCard from "./ProductCard"
 
 export default function HomePage() {
+
+
+    const [featuredProducts, setFeaturedProducts] = useState([]);
+
+    // if useEffect is called with an empty array, then the effect
+    // function will ONLY run when the component mounted (i.e the component
+    // is rendered for the first time)
+    useEffect(() => {
+        const fetchFeaturedProducts = async () => {
+            // when we refer to a static asset (images, css files, vanilla JS file, json) in React
+            // React will assume it is in the public folder
+            const response = await axios.get("/featured.json");
+            setFeaturedProducts(response.data);
+        }
+        fetchFeaturedProducts();
+    }, [])
+
     return (
         <>
             <header className="bg-primary text-white text-center py-5">
@@ -14,35 +34,19 @@ export default function HomePage() {
                 <h2 className="text-center mb-4">Featured Products</h2>
 
                 <div className="row">
-                    <div className="col-md-3 mb-4">
-                        <ProductCard
-                            imageUrl="https://picsum.photos/id/20/300/200"
-                            productName="Product 1"
-                            price={19.99}
-                        />
-                    </div>
-                    <div className="col-md-3 mb-4">
-                        <ProductCard
-                            imageUrl="https://picsum.photos/id/21/300/200"
-                            productName="Product 2"
-                            price={21.99}
-                        />
-                    </div>
-                    <div className="col-md-3 mb-4">
-                        <ProductCard
-                            imageUrl="https://picsum.photos/id/22/300/200"
-                            productName="Product 3"
-                            price={13.99}
-                        />
-                    </div>
-                    <div className="col-md-3 mb-4">
-                        <ProductCard
-                            imageUrl="https://picsum.photos/id/23/300/200"
-                            productName="Product 4"
-                            price={15.99}
+                    {
+                        featuredProducts.map((product) => {
+                            return (<div className="col-md-3 mb-4" key={product.id}>
+                                <ProductCard
+                                    imageUrl={product.imageUrl}
+                                    productName={product.name}
+                                    price={product.price}
+                                />
+                            </div>
+                            )
+                        })
+                    }
 
-                        />
-                    </div>
                 </div>
             </main>
         </>
