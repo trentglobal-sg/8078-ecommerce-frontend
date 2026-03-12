@@ -5,6 +5,8 @@ import HomePage from "./HomePage";
 import RegisterPage from './RegisterPage';
 import ProductPage from './ProductPage';
 import LoginPage from './LoginPage';
+import ShoppingCart from './ShoppingCart';
+
 import Navbar from "./Navbar";
 import FlashMessage from './FlashMessage';
 
@@ -19,6 +21,7 @@ export default function App() {
         <Route path="/register" component={RegisterPage}/>
         <Route path="/login" component={LoginPage}/>
         <Route path="/products" component={ProductPage}/>
+        <Route path="/cart" component={ShoppingCart}/>
       </Switch>
 
       <footer className="bg-dark text-white text-center py-3">
