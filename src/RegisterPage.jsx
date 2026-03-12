@@ -2,9 +2,14 @@ import { Formik, Form, Field, ErrorMessage } from "formik";
 import { useEffect, useState } from "react";
 import axios from "axios";
 import * as Yup from 'yup';
+import { useFlashMessage } from "./FlashMessageStore";
+import { useLocation } from "wouter";
+
 
 export default function RegisterPage() {
 
+    const [_, setLocation] = useLocation();
+    const { showMessage } = useFlashMessage();
     const validationSchema = Yup.object({
         name: Yup.string().required('Name is required'),
         email: Yup.string().email('Invalid email address').required('Email is required'),
@@ -49,7 +54,14 @@ export default function RegisterPage() {
         setTimeout(function () {
             console.log("Form has been processed successfully");
             formikHelpers.setSubmitting(false);
-        }, 5000)
+            if (values.email == "asd@asd.com") {
+                showMessage("Registered successfully", "success");
+            } else {
+                showMessage("Server not responding", "danger");
+            }
+
+            setLocation("/");
+        }, 2000)
     }
 
     return (<div className="container">

@@ -6,13 +6,14 @@ import RegisterPage from './RegisterPage';
 import ProductPage from './ProductPage';
 import LoginPage from './LoginPage';
 import Navbar from "./Navbar";
+import FlashMessage from './FlashMessage';
 
 
 export default function App() {
   return (
     <>
       <Navbar/>
-
+      <FlashMessage/>
       <Switch>
         <Route path="/" component={HomePage}/>
         <Route path="/register" component={RegisterPage}/>
