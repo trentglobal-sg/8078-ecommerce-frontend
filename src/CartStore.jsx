@@ -12,7 +12,7 @@ export const useCart = () => {
     const getCartTotal = () => {
         let total = 0;
         for (let cartItem of cart) {
-            total += cartItem.price;
+            total += cartItem.price * cartItem.quantity;
         }
         return total;
     }
