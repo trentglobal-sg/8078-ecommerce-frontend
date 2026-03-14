@@ -1,7 +1,7 @@
 import { useCart } from "./CartStore"
 
 export default function ShoppingCart() {
-    const { cart } = useCart();
+    const { cart, getCartTotal, removeFromCart, updateQuantity } = useCart();
     
     return <div className="container">
         <h3>Shopping Cart</h3>
@@ -13,14 +13,38 @@ export default function ShoppingCart() {
                         <img src={cartItem.imageUrl} />
                         <div>
                             <h5>{cartItem.name}</h5>
-                            <p>Quantity: {cartItem.quantity}</p>
+
+                            <div className="d-flex">
+                                <button className="btn btn-primary btn-sm me-2"
+                                    onClick={()=>{
+                                        updateQuantity(cartItem.id, cartItem.quantity - 1)
+                                    }}
+                                    disabled={ cartItem.quantity <= 1}
+                                >
+                                    -
+                                </button>    
+                                Quantity: {cartItem.quantity}
+                                <button 
+                                    className="btn btn-primary btn-sm ms-2"
+                                    onClick={()=>{
+                                        updateQuantity(cartItem.id, cartItem.quantity + 1)
+                                    }}
+                                >+</button> 
+                            </div>
                         </div>
-                        <span>${cartItem.price}</span>
+                        <span>${cartItem.price * cartItem.quantity}</span>
+                        <button className="btn btn-danger btn-sm" 
+                            onClick={()=>{
+                                removeFromCart(cartItem.id)
+                            }}
+                        
+                        >Delete</button>
                     </li>)
                 })
             }
 
 
         </ul>
+        <span>Total: ${getCartTotal()}</span>
     </div>
 }

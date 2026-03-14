@@ -1,24 +1,7 @@
 import { atom, useAtom } from 'jotai';
 
 const initialCart = [
-    {
-        "id": 1,
-        "product_id": 1,
-        "quantity": 10,
-        "name": "Organic Green Tea",
-        "price": 12.99,
-        "imageUrl":"https://picsum.photos/id/225/300/200",
-        "description":"Premium organic green tea leaves, rich in antioxidants and offering a smooth, refreshing taste."
-    },
-    {
-        "id": 2,
-        "product_id": 2,
-        "quantity": 19,
-        "name": "Roasted Black Tea",
-        "price": 15.99,
-        "imageUrl":"https://picsum.photos/id/225/300/200",
-        "description":"Premium organic green tea leaves, rich in antioxidants and offering a smooth, refreshing taste."
-    }
+
 ];
 
 const cartAtom = atom(initialCart);
@@ -34,5 +17,63 @@ export const useCart = () => {
         return total;
     }
 
-    return {cart, getCartTotal};
+    const addProductToCart = (product) => {
+
+        // check if the product in the shopping cart
+        const existingIndex = cart.findIndex(cartItem => cartItem.product_id === product.id);
+
+        // if not found, add as a new cart item
+        if (existingIndex === -1) {
+            const newCartItem = {
+                id: Math.floor(Math.random() * 10000 + 1),
+                product_id: product.id,
+                imageUrl: product.imageUrl,
+                description: product.description,
+                name: product.name,
+                quantity: 1,
+                price: product.price
+            }
+            const cloned = [...cart, newCartItem];
+            setCart(cloned);
+        } else {
+            const existingCartItem = cart[existingIndex];
+            const clonedCartItem = {
+                ...existingCartItem,
+                quantity: existingCartItem.quantity + 1
+            }
+
+            const cloned = cart.with(existingIndex, clonedCartItem);
+            setCart(cloned);
+        }
+
+
+    }
+
+    const removeFromCart = (cartItemId) => {
+        const indexToRemove = cart.findIndex(c => c.id === cartItemId);
+        if (indexToRemove !== -1) {
+            const cloned = cart.toSpliced(indexToRemove, 1);
+            setCart(cloned);
+        }
+    }
+
+    const updateQuantity = (cartItemId, newQuantity) => {
+        if (newQuantity <= 0) {
+            return;
+        }
+        const indexToUpdate = cart.findIndex(c => c.id === cartItemId);
+        console.log(indexToUpdate)
+        if (indexToUpdate !== -1) {
+            const modifiedCartItem = {
+                ...cart[indexToUpdate],
+                quantity: newQuantity
+            }
+            console.log(modifiedCartItem);
+            // const cloned = cart.toSpliced(indexToUpdate, 1,  modifiedCartItem);
+            const cloned = cart.with(indexToUpdate, modifiedCartItem);
+            setCart(cloned);
+        }
+    }
+
+    return { cart, getCartTotal, addProductToCart, removeFromCart, updateQuantity };
 }
