@@ -46,22 +46,17 @@ export default function RegisterPage() {
     // function to handle the form submission
     // values: the values from the form (i.e what the user has entered)
     // formikHelpers: is an object that contains utility functions
-    const handleSubmit = (values, formikHelpers) => {
+    const handleSubmit = async (values, formikHelpers) => {
         console.log("values from the form =>", values);
-        console.log(formikHelpers);
-
-        // simulate a five second wait for the form to be processed
-        setTimeout(function () {
+        try {
+            const response = await axios.post(import.meta.env.VITE_API_URL + "/api/users/register", values);
             console.log("Form has been processed successfully");
             formikHelpers.setSubmitting(false);
-            if (values.email == "asd@asd.com") {
-                showMessage("Registered successfully", "success");
-            } else {
-                showMessage("Server not responding", "danger");
-            }
-
+            showMessage("You have registered successfully", "success");
             setLocation("/");
-        }, 2000)
+        } catch (e) {
+            showMessage("Unable to register. Please try again later", "danger");
+        }
     }
 
     return (<div className="container">

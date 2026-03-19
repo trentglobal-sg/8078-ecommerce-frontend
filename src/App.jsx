@@ -9,6 +9,7 @@ import ShoppingCart from './ShoppingCart';
 
 import Navbar from "./Navbar";
 import FlashMessage from './FlashMessage';
+import Profile from './Profile';
 
 
 export default function App() {
@@ -22,6 +23,7 @@ export default function App() {
         <Route path="/login" component={LoginPage}/>
         <Route path="/products" component={ProductPage}/>
         <Route path="/cart" component={ShoppingCart}/>
+        <Route path="/profile" component={Profile}/>
       </Switch>
 
       <footer className="bg-dark text-white text-center py-3">
