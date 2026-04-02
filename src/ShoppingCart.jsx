@@ -1,8 +1,16 @@
+import { useEffect } from "react";
 import { useCart } from "./CartStore"
+import { useJwt } from "./UserStore";
+import axios from "axios";
 
 export default function ShoppingCart() {
-    const { cart, getCartTotal, removeFromCart, updateQuantity } = useCart();
+    const { cart, getCartTotal, removeFromCart, updateQuantity, fetchCart } = useCart();
+    const { getJwt} = useJwt();
     
+    useEffect(()=>{
+        fetchCart();
+    }, [])
+
     return <div className="container">
         <h3>Shopping Cart</h3>
         <ul className="list-group">
@@ -32,7 +40,8 @@ export default function ShoppingCart() {
                                 >+</button> 
                             </div>
                         </div>
-                        <span>${cartItem.price * cartItem.quantity}</span>
+                        <span>Per Pax: ${cartItem.price}</span>
+                        <span>${(cartItem.price * cartItem.quantity).toFixed(2)}</span>
                         <button className="btn btn-danger btn-sm" 
                             onClick={()=>{
                                 removeFromCart(cartItem.id)
@@ -45,6 +54,22 @@ export default function ShoppingCart() {
 
 
         </ul>
-        <span>Total: ${getCartTotal()}</span>
+        <span>Total: ${getCartTotal().toFixed(2)}</span>
+        <button className="btn btn-success" onClick={async ()=>{
+            const jwt = getJwt();
+            try {
+                const response = await axios.post(import.meta.env.VITE_API_URL + "/api/checkout", {}, {
+                    headers: {
+                        Authorization: 'Bearer ' + jwt
+                    }
+                });
+                console.log(response.data);
+                // redirect the user to the stripe payment page
+                window.location.href = response.data.url;
+            } catch (e) {
+                alert("Error. Please try again later");
+                console.error(e);
+            }
+        }}>Checkout</button>
     </div>
 }

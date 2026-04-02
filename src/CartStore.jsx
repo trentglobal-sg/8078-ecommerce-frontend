@@ -1,4 +1,6 @@
 import { atom, useAtom } from 'jotai';
+import { useJwt } from './UserStore';
+import axios from 'axios';
 
 const initialCart = [
 
@@ -8,6 +10,44 @@ const cartAtom = atom(initialCart);
 
 export const useCart = () => {
     const [cart, setCart] = useAtom(cartAtom);
+    const {getJwt} = useJwt();
+
+    const fetchCart = async() => {
+        const jwt = getJwt();
+        try {
+            const response = await axios.get(import.meta.env.VITE_API_URL + "/api/cart",{
+                'headers': {
+                    'Authorization': 'Bearer ' + jwt
+                }
+            })
+            setCart(response.data);
+        } catch (e) {
+            console.error("Error fetching cart:", error);
+        }
+    }
+
+    const updateCart = async(updatedCart) => {
+        const jwt = getJwt();
+        try {
+            const cartItems = updatedCart.map(item => {
+                return {
+                    product_id: item.product_id,
+                    quantity: item.quantity
+                }
+            });
+
+            await axios.put(import.meta.env.VITE_API_URL + '/api/cart', {
+                cartItems: cartItems
+            },{
+                'headers': {
+                    'Authorization':'Bearer ' + jwt
+                }
+            })
+
+        } catch(e) {
+            console.error(e);
+        }
+    }
 
     const getCartTotal = () => {
         let total = 0;
@@ -35,6 +75,7 @@ export const useCart = () => {
             }
             const cloned = [...cart, newCartItem];
             setCart(cloned);
+            updateCart(cloned);
         } else {
             const existingCartItem = cart[existingIndex];
             const clonedCartItem = {
@@ -44,6 +85,7 @@ export const useCart = () => {
 
             const cloned = cart.with(existingIndex, clonedCartItem);
             setCart(cloned);
+            updateCart(cloned);
         }
 
 
@@ -54,6 +96,7 @@ export const useCart = () => {
         if (indexToRemove !== -1) {
             const cloned = cart.toSpliced(indexToRemove, 1);
             setCart(cloned);
+            updateCart(cloned);
         }
     }
 
@@ -68,12 +111,13 @@ export const useCart = () => {
                 ...cart[indexToUpdate],
                 quantity: newQuantity
             }
-            console.log(modifiedCartItem);
+    
             // const cloned = cart.toSpliced(indexToUpdate, 1,  modifiedCartItem);
             const cloned = cart.with(indexToUpdate, modifiedCartItem);
             setCart(cloned);
+            updateCart(cloned);
         }
     }
 
-    return { cart, getCartTotal, addProductToCart, removeFromCart, updateQuantity };
+    return { cart, getCartTotal, addProductToCart, removeFromCart, updateQuantity,fetchCart, updateCart };
 }
